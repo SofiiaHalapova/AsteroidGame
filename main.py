@@ -16,8 +16,6 @@ plt.rcParams["figure.figsize"] = (15, 15)
 plt.ion()  # interactive mode
 plt.style.use("dark_background")
 
-
-
 def rotation_mat(degrees):
     # R  = np.identity(3)
     rad = np.deg2rad(degrees)
@@ -230,8 +228,9 @@ class Rocket(MovableObject):
             [0, 0.1],
         ])
 
+        self.radius = 0.1
         self.pos = np.array(Player.get_instance().vec_pos)
-        self.speed = 60 + Player.get_instance().speed
+        self.speed = 120 + Player.get_instance().speed
         self.set_angle(Player.get_instance().get_angle())
         self.update_transformation()
 
@@ -352,6 +351,29 @@ class Game:
             for actor in self.actors:  # polymorhism
                 actor.update_movement(dt)
                 actor.draw()
+
+            rockets, asteroids = [], []
+
+            for actor in Game.get_instance().actors:
+                if isinstance(actor, Rocket):
+                    rockets.append(actor)
+                elif isinstance(actor, Asteroid):
+                    asteroids.append(actor)
+
+            remove = set()
+
+            for rocket in rockets:
+                for asteroid in asteroids:
+                    d = np.linalg.norm(rocket.vec_pos - asteroid.vec_pos)
+
+                    if d < (rocket.radius + asteroid.radius):
+                        remove.add(rocket)
+                        remove.add(asteroid)
+                        self.score += 1
+
+            for actor in remove:
+                if actor in self.actors:
+                    self.actors.remove(actor)
 
             plt.draw()
             plt.pause(dt)
