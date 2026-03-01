@@ -228,7 +228,7 @@ class Rocket(MovableObject):
             [0, 0.1],
         ])
 
-        self.radius = 0.1
+        self.radius = 0.2
         self.pos = np.array(Player.get_instance().vec_pos)
         self.speed = 120 + Player.get_instance().speed
         self.set_angle(Player.get_instance().get_angle())
@@ -250,6 +250,7 @@ class Player(MovableObject):
             [-0.5, 0]
         ])
 
+        self.radius = 0.5
         self.S = scale_mat(0.5, 1.0)
         self.T_center = translation_mat(0, -0.5)
 
@@ -352,20 +353,21 @@ class Game:
                 actor.update_movement(dt)
                 actor.draw()
 
-            rockets, asteroids = [], []
+            rockets, asteroids, planets = [], [], []
 
             for actor in Game.get_instance().actors:
                 if isinstance(actor, Rocket):
                     rockets.append(actor)
                 elif isinstance(actor, Asteroid):
                     asteroids.append(actor)
+                elif isinstance(actor, Planet):
+                    planets.append(actor)
 
             remove = set()
 
             for rocket in rockets:
                 for asteroid in asteroids:
                     d = np.linalg.norm(rocket.vec_pos - asteroid.vec_pos)
-
                     if d < (rocket.radius + asteroid.radius):
                         remove.add(rocket)
                         remove.add(asteroid)
@@ -374,6 +376,35 @@ class Game:
             for actor in remove:
                 if actor in self.actors:
                     self.actors.remove(actor)
+
+            player = Player.get_instance()
+
+            for planet in planets:
+                d = np.linalg.norm(player.vec_pos - planet.vec_pos)
+                if d < (planet.radius + player.radius):
+                    plt.text(0, 0, "GAME OVER", fontsize=40, color='red',
+                             ha='center', va='center', fontweight='bold')
+                    plt.draw()
+                    plt.pause(3)
+                    self.is_running = False
+
+            for asteroid in asteroids:
+                d = np.linalg.norm(player.vec_pos - asteroid.vec_pos)
+                if d < (asteroid.radius + player.radius):
+                    plt.text(0, 0, "GAME OVER", fontsize=40, color='red',
+                             ha='center', va='center', fontweight='bold')
+                    plt.draw()
+                    plt.pause(3)
+                    self.is_running = False
+
+            if len(asteroids) == 0:
+                plt.text(0, 0, "YOU WON", fontsize=40, color='red',
+                         ha='center', va='center', fontweight='bold')
+                plt.draw()
+                plt.pause(3)
+                self.is_running = False
+
+
 
             plt.draw()
             plt.pause(dt)
