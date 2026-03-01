@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from math import sqrt
 
 import numpy as np
 import matplotlib
@@ -163,8 +164,12 @@ class Planet(StaticObject):
         self.update_transformation()
 
     def update_movement(self, delta_time: float):
-        # TODO implement gravity calculation with regards to player
-        self.vec_F = np.zeros(2,)
+        # implement gravity calculation with regards to player
+        C_planet = 20
+        direction_vector = self.vec_pos - Player.get_instance().vec_pos
+        d = np.linalg.norm(direction_vector)
+
+        self.vec_F = (direction_vector / d) * (C_planet / (d * d))
 
 
 class MovableObject(StaticObject):
