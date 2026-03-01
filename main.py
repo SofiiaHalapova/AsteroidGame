@@ -1,13 +1,9 @@
 from __future__ import annotations
 import numpy as np
-import os
 import matplotlib
 import matplotlib.backend_bases
 
-if os.name == "darwin":
-    matplotlib.use("MacOSX")  # for mac
-else:
-    matplotlib.use("TkAgg")  # for unix/windows
+matplotlib.use("TkAgg")
 
 import matplotlib.pyplot as plt
 
@@ -23,6 +19,7 @@ def rotation_mat(degrees):
     rad = np.deg2rad(degrees)
     c = np.cos(rad)
     s = np.sin(rad)
+
     R = np.array([[c, -s, 0.],
                   [s, c, 0.],
                   [0, 0, 1.]])
@@ -39,7 +36,7 @@ def translation_mat(dx, dy):
 
 
 def scale_mat(sx, sy):
-    # S = np.identity(3) #TODO
+    # S = np.identity(3)
     S = np.array([[sx, 0, 0],
                   [0, sy, 0],
                   [0, 0, 1]])
@@ -115,8 +112,11 @@ class StaticObject:
     def update_transformation(self):
         self.T = translation_mat(self.vec_pos[0], self.vec_pos[1])
         self.T_center = translation_mat(0, -0.5)
+
         self.C = np.identity(3)
 
+        self.C = np.dot(self.T_center, self.C)
+        self.C = np.dot(self.S, self.C)
         self.C = np.dot(self.R, self.C)
         self.C = np.dot(self.T, self.C)
 
@@ -221,6 +221,8 @@ class Player(MovableObject):
             [0.5, 0],
             [-0.5, 0]
         ])
+
+        self.S = scale_mat(0.5, 1.0)
         self.T_center = translation_mat(0, -0.5)
 
         self.speed = 0
@@ -334,26 +336,3 @@ class Game:
 
 game = Game.get_instance()
 game.main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
