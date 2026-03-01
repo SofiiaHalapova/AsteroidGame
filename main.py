@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import random
+
 import numpy as np
 import matplotlib
 import matplotlib.backend_bases
@@ -144,9 +147,18 @@ class Planet(StaticObject):
         super().__init__(vec_pos)
 
         self.color = 'b'
-        self.vec_F = np.zeros(2,) # panet gravity force
+        self.vec_F = np.zeros(2,) # planet gravity force
         self.radius = 1.0
-        self.geometry = [] # TODO generate planet geometry
+
+        self.geometry = []  # generate planet geometry
+
+        for angle in range(0, 361, 10):
+            radians = np.deg2rad(angle)
+
+            x = self.radius * np.cos(radians)
+            y = self.radius * np.sin(radians)
+
+            self.geometry.append(np.array([x, y]))
 
         self.update_transformation()
 
@@ -179,6 +191,14 @@ class Asteroid(MovableObject):
         step = 2 * np.pi / 20
         self.radius = np.random.random() * 0.2 + 0.2
         self.geometry = [] # TODO generate asteroid geometry
+
+        for angle in range(0, 361, 10):
+            radians = np.deg2rad(angle)
+
+            x = self.radius * np.cos(radians)
+            y = self.radius * np.sin(radians)
+
+            self.geometry.append(np.array([x, y]))
 
         self.S = np.identity(3) # TODO scew asteroid
 
