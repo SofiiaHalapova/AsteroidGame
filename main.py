@@ -48,7 +48,9 @@ def scale_mat(sx, sy):
 
 
 def scew_mat(x, y):
-    W = np.identity(3) #TODO
+    W = np.array([[1, x, 0],
+                  [y, 1, 0],
+                  [0, 0, 1]])
     return W
 
 
@@ -117,14 +119,14 @@ class StaticObject:
         self.T = translation_mat(self.vec_pos[0], self.vec_pos[1])
         self.T_center = translation_mat(0, -0.5)
 
+        # chained together T_center, R, T, S in C
+
         self.C = np.identity(3)
 
         self.C = np.dot(self.T_center, self.C)
         self.C = np.dot(self.S, self.C)
         self.C = np.dot(self.R, self.C)
         self.C = np.dot(self.T, self.C)
-
-        # TODO chain together T_center, R, T, S in C using correct order!
 
     def draw(self):
         x_values = []
@@ -195,7 +197,7 @@ class Asteroid(MovableObject):
 
         step = 2 * np.pi / 20
         self.radius = np.random.random() * 0.2 + 0.2
-        self.geometry = [] # TODO generate asteroid geometry
+        self.geometry = [] # generate asteroid geometry
 
         for angle in range(0, 361, 10):
             radians = np.deg2rad(angle)
@@ -205,7 +207,9 @@ class Asteroid(MovableObject):
 
             self.geometry.append(np.array([x, y]))
 
-        self.S = np.identity(3) # TODO scew asteroid
+        kx = np.random.uniform(-0.5, 0.5)
+        ky = np.random.uniform(-0.5, 0.5)
+        self.S = scew_mat(kx, ky) # scew asteroid
 
         self.speed = np.random.random() * 20 + 10
         self.set_angle(np.random.random() * 360)
