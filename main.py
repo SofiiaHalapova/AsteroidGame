@@ -373,23 +373,16 @@ class Game:
                         remove.update([rocket, asteroid])
                         self.score += 1
 
-
             for actor in remove:
                 if actor in self.actors:
                     self.actors.remove(actor)
 
             player = Player.get_instance()
 
-            for planet in planets:
-                d = np.linalg.norm(player.vec_pos - planet.vec_pos)
-                if d < (planet.radius + player.radius):
+            for obstacle in planets + asteroids:
+                d = np.linalg.norm(player.vec_pos - obstacle.vec_pos)
+                if d < (obstacle.radius + player.radius):
                     self.end_game("Game Over")
-
-            for asteroid in asteroids:
-                d = np.linalg.norm(player.vec_pos - asteroid.vec_pos)
-                if d < (asteroid.radius + player.radius):
-                    self.end_game("Game Over")
-
 
             if len(asteroids) == 0:
                 self.end_game("You won!")
