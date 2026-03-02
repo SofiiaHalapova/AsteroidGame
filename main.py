@@ -370,8 +370,7 @@ class Game:
                 for asteroid in asteroids:
                     d = np.linalg.norm(rocket.vec_pos - asteroid.vec_pos)
                     if d < (rocket.radius + asteroid.radius):
-                        remove.add(rocket)
-                        remove.add(asteroid)
+                        remove.update([rocket, asteroid])
                         self.score += 1
 
 
