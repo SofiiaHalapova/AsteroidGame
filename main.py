@@ -332,6 +332,13 @@ class Game:
     def on_close(self: Game, event: matplotlib.backend_bases.Event):
         self.is_running = False
 
+    def end_game(self, message: str):
+        plt.text(0, 0, message.upper(), fontsize=40, color='red',
+                 ha='center', va='center', fontweight='bold')
+        plt.draw()
+        plt.pause(3)
+        self.is_running = False
+
     def main(self: Game):
 
         fig, _ = plt.subplots()
@@ -373,6 +380,7 @@ class Game:
                         remove.add(asteroid)
                         self.score += 1
 
+
             for actor in remove:
                 if actor in self.actors:
                     self.actors.remove(actor)
@@ -382,29 +390,16 @@ class Game:
             for planet in planets:
                 d = np.linalg.norm(player.vec_pos - planet.vec_pos)
                 if d < (planet.radius + player.radius):
-                    plt.text(0, 0, "GAME OVER", fontsize=40, color='red',
-                             ha='center', va='center', fontweight='bold')
-                    plt.draw()
-                    plt.pause(3)
-                    self.is_running = False
+                    self.end_game("Game Over")
 
             for asteroid in asteroids:
                 d = np.linalg.norm(player.vec_pos - asteroid.vec_pos)
                 if d < (asteroid.radius + player.radius):
-                    plt.text(0, 0, "GAME OVER", fontsize=40, color='red',
-                             ha='center', va='center', fontweight='bold')
-                    plt.draw()
-                    plt.pause(3)
-                    self.is_running = False
+                    self.end_game("Game Over")
+
 
             if len(asteroids) == 0:
-                plt.text(0, 0, "YOU WON", fontsize=40, color='red',
-                         ha='center', va='center', fontweight='bold')
-                plt.draw()
-                plt.pause(3)
-                self.is_running = False
-
-
+                self.end_game("You won!")
 
             plt.draw()
             plt.pause(dt)
