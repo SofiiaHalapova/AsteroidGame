@@ -360,15 +360,9 @@ class Game:
                 actor.update_movement(dt)
                 actor.draw()
 
-            rockets, asteroids, planets = [], [], []
-
-            for actor in Game.get_instance().actors:
-                if isinstance(actor, Rocket):
-                    rockets.append(actor)
-                elif isinstance(actor, Asteroid):
-                    asteroids.append(actor)
-                elif isinstance(actor, Planet):
-                    planets.append(actor)
+            rockets = [r for r in self.actors if isinstance(r, Rocket)]
+            asteroids = [a for a in self.actors if isinstance(a, Asteroid)]
+            planets = [p for p in self.actors if isinstance(p, Planet)]
 
             remove = set()
 
